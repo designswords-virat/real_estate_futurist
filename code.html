@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta name="description" content="Aetheris — orchestrating future civilizations through algorithmic architecture and parametric urbanism. Structural intelligence for the post-anthropocene."/>
+<meta name="theme-color" content="#0e141a"/>
+<title>Aetheris | Orchestrating Future Civilizations</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230e141a'/%3E%3Ctext x='50%25' y='70%25' text-anchor='middle' font-family='Anybody,sans-serif' font-weight='800' font-size='22' fill='%2333dcd3'%3EA%3C/text%3E%3C/svg%3E"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wght@100..900&amp;family=Hanken+Grotesk:wght@100..900&amp;family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" defer></script>
+<style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --neon-cyan: #33dcd3;
+        }
+        :focus-visible { outline: 1px solid #33dcd3; outline-offset: 4px; }
+        .sr-only {
+            position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+        }
+        html { overflow-x: hidden; max-width: 100vw; }
+        body {
+            background-color: #0e141a;
+            color: #dde3eb;
+            overflow-x: hidden;
+            max-width: 100vw;
+            font-family: 'Hanken Grotesk', sans-serif;
+        }
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+        }
+        .neon-glow-cyan {
+            box-shadow: 0 0 40px rgba(51, 220, 211, 0.15);
+        }
+        .hologram-line {
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+            height: 1px;
+            width: 100%;
+        }
+        @keyframes pulse-cyan {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+        .animate-pulse-cyan { animation: pulse-cyan 3s infinite ease-in-out; }
+        .text-glow { text-shadow: 0 0 10px rgba(51, 220, 211, 0.5); }
+
+        /* ============================================================
+           PAGE-LEVEL · Lenis smooth scroll resets
+           ============================================================ */
+        html.lenis, html.lenis body { height: auto; }
+        html.lenis.lenis-smooth { scroll-behavior: auto !important; }
+        html.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        html.lenis.lenis-stopped { overflow: clip; }
+        html.lenis.lenis-scrolling iframe { pointer-events: none; }
+
+        /* ============================================================
+           PAGE-LEVEL · Custom cursor (cyan ring, additive over dark surface)
+           ============================================================ */
+        .cursor-dot, .cursor-ring {
+            position: fixed; top: 0; left: 0;
+            pointer-events: none; z-index: 250;
+            will-change: transform;
+        }
+        .cursor-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #33dcd3;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 8px rgba(51,220,211,0.7);
+        }
+        .cursor-ring {
+            width: 32px; height: 32px; border-radius: 50%;
+            border: 1px solid #33dcd3;
+            transform: translate(-50%, -50%) scale(1);
+            transition: transform 0.35s cubic-bezier(0.22,1,0.36,1),
+                        width 0.35s cubic-bezier(0.22,1,0.36,1),
+                        height 0.35s cubic-bezier(0.22,1,0.36,1),
+                        background 0.3s ease;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 9px; font-weight: 600;
+            letter-spacing: 0.2em;
+            color: #33dcd3;
+            text-transform: uppercase;
+        }
+        body.cursor-hover .cursor-ring {
+            transform: translate(-50%, -50%) scale(1.7);
+            background: rgba(51,220,211,0.06);
+        }
+        body.cursor-label .cursor-ring {
+            width: 80px; height: 80px;
+        }
+        @media (hover: none), (pointer: coarse) {
+            .cursor-dot, .cursor-ring { display: none; }
+        }
+        .magnetic-btn { will-change: transform; }
+
+        /* ============================================================
+           PAGE-LEVEL · Cinematic letterbox intro (top + bottom bars retract)
+           ============================================================ */
+        .letterbox {
+            position: fixed; left: 0; right: 0; z-index: 300;
+            background: #0e141a; pointer-events: none;
+            will-change: height;
+        }
+        .letterbox.top { top: 0; height: 50vh; }
+        .letterbox.bottom { bottom: 0; height: 50vh; }
+        .letterbox.retract.top { height: 0; transition: height 1.2s cubic-bezier(0.85,0,0.15,1) 0.1s; }
+        .letterbox.retract.bottom { height: 0; transition: height 1.2s cubic-bezier(0.85,0,0.15,1) 0.1s; }
+
+        /* ============================================================
+           SECTION 1 · NAV — letter stagger + scroll-glow shift
+           ============================================================ */
+        .nav-letter {
+            display: inline-block; opacity: 0; transform: translateY(-8px);
+            animation: nav-letter-in 0.6s cubic-bezier(0.22,1,0.36,1) forwards;
+        }
+        @keyframes nav-letter-in { to { opacity: 1; transform: translateY(0); } }
+        .nav-link { position: relative; }
+        .nav-link::after {
+            content: ""; position: absolute; left: 0; right: 0; bottom: -4px;
+            height: 1px; background: #33dcd3;
+            transform: scaleX(0); transform-origin: left center;
+            transition: transform 0.5s cubic-bezier(0.22,1,0.36,1);
+        }
+        .nav-link:hover::after { transform: scaleX(1); }
+        #mobile-menu {
+            transform: translateY(-100%);
+            transition: transform 0.7s cubic-bezier(0.22,1,0.36,1);
+        }
+        #mobile-menu.open { transform: translateY(0); }
+
+        /* ============================================================
+           SECTION 2 · HERO — mouse parallax bg, glow pulse, search slide
+           ============================================================ */
+        .hero-bg-layer { will-change: transform; transition: transform 0.8s cubic-bezier(0.22,1,0.36,1); }
+        .hero-panel {
+            opacity: 0; transform: translateY(30px);
+            animation: hero-panel-up 1.0s cubic-bezier(0.22,1,0.36,1) 1.3s forwards;
+        }
+        @keyframes hero-panel-up { to { opacity: 1; transform: translateY(0); } }
+        .hero-eyebrow {
+            opacity: 0;
+            animation: hero-fade-in 0.9s ease 1.1s forwards;
+        }
+        @keyframes hero-fade-in { to { opacity: 1; } }
+
+        /* ============================================================
+           SECTION 3 · NEURAL SEARCH — labels fade in, panel scan line
+           ============================================================ */
+        [data-search] {
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.22,1,0.36,1);
+        }
+        [data-search].in { opacity: 1; transform: translateY(0); }
+        [data-search-field] {
+            opacity: 0; transform: translateY(10px);
+            transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1);
+        }
+        [data-search].in [data-search-field] { opacity: 1; transform: translateY(0); }
+        [data-search].in [data-search-field]:nth-of-type(1) { transition-delay: 0.15s; }
+        [data-search].in [data-search-field]:nth-of-type(2) { transition-delay: 0.25s; }
+        [data-search].in [data-search-field]:nth-of-type(3) { transition-delay: 0.35s; }
+        [data-search].in [data-search-field]:nth-of-type(4) { transition-delay: 0.45s; }
+        .map-panel { opacity: 0; transform: scale(0.97); transition: opacity 1.0s ease, transform 1.0s cubic-bezier(0.22,1,0.36,1); }
+        .map-panel.in { opacity: 1; transform: scale(1); }
+        .map-panel::after {
+            content: ""; position: absolute; left: 0; right: 0; top: 0;
+            height: 2px;
+            background: linear-gradient(to bottom, rgba(51,220,211,0.6), transparent);
+            animation: scan-line 4s linear infinite;
+            pointer-events: none;
+            z-index: 5;
+        }
+        @keyframes scan-line {
+            0% { transform: translateY(0); opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(500px); opacity: 0; }
+        }
+
+        /* ============================================================
+           SECTION 4 · MEGASTRUCTURES — glass panels rise + border pulse
+           ============================================================ */
+        .mega-card {
+            opacity: 0; transform: translateY(40px);
+            transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.22,1,0.36,1);
+        }
+        .mega-card.in { opacity: 1; transform: translateY(0); }
+        .mega-card.in {
+            animation: mega-glow 4s ease-in-out infinite alternate 1s;
+        }
+        @keyframes mega-glow {
+            0% { box-shadow: 0 0 0 rgba(51,220,211,0); }
+            100% { box-shadow: 0 0 40px rgba(51,220,211,0.12); }
+        }
+
+        /* ============================================================
+           SECTION 5 · INTELLIGENT INFRASTRUCTURE — feature slide + HUD ring spin
+           ============================================================ */
+        .infra-feature {
+            opacity: 0; transform: translateX(-30px);
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22,1,0.36,1);
+        }
+        .infra-feature.in { opacity: 1; transform: translateX(0); }
+        .hud-ring {
+            opacity: 0; transform: scale(0.85) rotate(-30deg);
+            transition: opacity 1.0s ease, transform 1.2s cubic-bezier(0.22,1,0.36,1);
+        }
+        .hud-ring.in { opacity: 1; transform: scale(1) rotate(0); }
+        .hud-ring-rotate {
+            animation: hud-spin 60s linear infinite;
+        }
+        @keyframes hud-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* ============================================================
+           SECTION 6 (anchor) · VISUAL ANTHOLOGY — pinned horizontal scrub
+           ============================================================ */
+        /* Mobile fallback: horizontal swipe-able snap scroller */
+        .anthology-track {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            padding-inline: 24px;
+            padding-bottom: 1rem;
+        }
+        .anthology-track > .anthology-tile { scroll-snap-align: start; }
+        .anthology-track::-webkit-scrollbar { display: none; }
+        .anthology-track { scrollbar-width: none; }
+
+        @media (min-width: 768px) {
+            .anthology-pin {
+                position: relative;
+                height: 300vh; /* sticky 100vh + 200vh of horizontal scrub */
+            }
+            .anthology-sticky {
+                position: sticky; top: 0;
+                height: 100vh;
+                overflow: hidden;
+                display: flex; align-items: center;
+            }
+            .anthology-track {
+                display: flex; gap: 32px;
+                padding-inline: 64px;
+                overflow-x: visible;       /* GSAP drives x-translate on desktop */
+                scroll-snap-type: none;
+                will-change: transform;
+            }
+            .anthology-track > .anthology-tile {
+                flex: 0 0 70vw; max-width: 900px;
+                height: 70vh;
+                scroll-snap-align: none;
+            }
+        }
+        .anthology-tile img {
+            transition: filter 0.7s ease, transform 1.0s cubic-bezier(0.22,1,0.36,1);
+            filter: grayscale(1) brightness(0.85);
+        }
+        .anthology-tile:hover img { filter: grayscale(0) brightness(1); transform: scale(1.04); }
+
+        /* ============================================================
+           SECTION 7 · MILESTONES — vertical line draws + sequential markers
+           ============================================================ */
+        .milestone-line {
+            position: absolute; left: 50%; top: 0;
+            width: 1px; height: 0;
+            background: linear-gradient(to bottom, transparent, #33dcd3 20%, #33dcd3 80%, transparent);
+            transform: translateX(-50%);
+            transition: height 1.8s cubic-bezier(0.22,1,0.36,1);
+            z-index: 0;
+        }
+        .milestone-section.in .milestone-line { height: 100%; }
+        .milestone-row {
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22,1,0.36,1);
+        }
+        .milestone-row.in { opacity: 1; transform: translateY(0); }
+        .milestone-dot {
+            transform: scale(0);
+            transition: transform 0.6s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .milestone-row.in .milestone-dot { transform: scale(1); }
+
+        /* ============================================================
+           SECTION 8 · STATS — count-up + label rise
+           ============================================================ */
+        .stat-block {
+            opacity: 0; transform: translateY(16px);
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22,1,0.36,1);
+        }
+        .stat-block.in { opacity: 1; transform: translateY(0); }
+
+        /* ============================================================
+           SECTION 9 · PHILOSOPHY — image clip wipe + masked headline rise
+           ============================================================ */
+        .philosophy-img {
+            clip-path: inset(0 0 100% 0);
+            transition: clip-path 1.3s cubic-bezier(0.85,0,0.15,1);
+        }
+        .philosophy-img.in { clip-path: inset(0 0 0 0); }
+        .phil-line {
+            display: block; overflow: hidden;
+            padding-bottom: 0.1em;
+        }
+        .phil-line > span {
+            display: inline-block;
+            transform: translateY(105%);
+            transition: transform 1.1s cubic-bezier(0.22,1,0.36,1);
+        }
+        [data-phil].in .phil-line > span { transform: translateY(0); }
+        [data-phil].in .phil-line:nth-of-type(2) > span { transition-delay: 0.1s; }
+        [data-phil-body], [data-phil-author] {
+            opacity: 0; transform: translateY(16px);
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22,1,0.36,1);
+        }
+        [data-phil].in [data-phil-body] { opacity: 1; transform: translateY(0); transition-delay: 0.3s; }
+        [data-phil].in [data-phil-author] { opacity: 1; transform: translateY(0); transition-delay: 0.5s; }
+
+        /* ============================================================
+           SECTION 10 · JOURNAL + FAQ — card fade + accessible accordion
+           ============================================================ */
+        .journal-card {
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22,1,0.36,1);
+        }
+        .journal-card.in { opacity: 1; transform: translateY(0); }
+        .faq-item {
+            opacity: 0; transform: translateY(16px);
+            transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22,1,0.36,1);
+            border-bottom: 1px solid #3b4948;
+        }
+        .faq-item.in { opacity: 1; transform: translateY(0); }
+        .faq-trigger {
+            width: 100%; display: flex; align-items: center; justify-content: space-between;
+            gap: 1.5rem; padding: 1.25rem 0;
+            background: transparent; border: none; cursor: pointer;
+            color: inherit; text-align: left;
+        }
+        .faq-icon {
+            transition: transform 0.5s cubic-bezier(0.22,1,0.36,1);
+            color: #33dcd3;
+        }
+        .faq-item.open .faq-icon { transform: rotate(45deg); }
+        .faq-content {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.6s cubic-bezier(0.22,1,0.36,1);
+        }
+        .faq-item.open .faq-content { grid-template-rows: 1fr; }
+        .faq-content > div { overflow: hidden; }
+        .faq-content p { padding-bottom: 1rem; color: #bacac7; max-width: 65ch; }
+
+        /* ============================================================
+           SECTION 11 · CTA — letter mask + radial pulse
+           ============================================================ */
+        .cta-line {
+            display: block; overflow: hidden;
+            padding-bottom: 0.12em;
+        }
+        .cta-line > span {
+            display: inline-block;
+            transform: translateY(105%);
+            transition: transform 1.0s cubic-bezier(0.22,1,0.36,1);
+        }
+        [data-cta].in .cta-line > span { transform: translateY(0); }
+        [data-cta-body], [data-cta-btn] {
+            opacity: 0; transform: translateY(16px);
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22,1,0.36,1);
+        }
+        [data-cta].in [data-cta-body] { opacity: 1; transform: translateY(0); transition-delay: 0.3s; }
+        [data-cta].in [data-cta-btn] { opacity: 1; transform: translateY(0); transition-delay: 0.5s; }
+
+        /* ============================================================
+           SECTION 12 · FOOTER — wave rise
+           ============================================================ */
+        .footer-col {
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22,1,0.36,1);
+        }
+        .footer-col.in { opacity: 1; transform: translateY(0); }
+
+        /* ============================================================
+           Reduced motion
+           ============================================================ */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .cursor-dot, .cursor-ring { display: none !important; }
+            .letterbox { display: none; }
+            .philosophy-img { clip-path: inset(0 0 0 0) !important; }
+            .anthology-pin { height: auto !important; }
+            .anthology-sticky { position: static !important; height: auto !important; overflow: visible !important; }
+            .anthology-track { flex-wrap: wrap; padding-inline: 0; }
+            .anthology-tile img { filter: none !important; }
+            .map-panel::after { display: none; }
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-background": "#dde3eb",
+                      "surface-container-low": "#161c22",
+                      "on-tertiary-fixed-variant": "#4617cb",
+                      "outline": "#859492",
+                      "outline-variant": "#3b4948",
+                      "surface-container": "#1a2026",
+                      "primary-container": "#5df9ef",
+                      "error-container": "#93000a",
+                      "on-secondary-fixed": "#001c37",
+                      "background": "#0e141a",
+                      "primary-fixed": "#5df9ef",
+                      "secondary": "#a0caff",
+                      "secondary-fixed": "#d2e4ff",
+                      "surface-container-highest": "#2f353c",
+                      "tertiary": "#ffffff",
+                      "primary-fixed-dim": "#33dcd3",
+                      "secondary-container": "#3694ec",
+                      "surface-variant": "#2f353c",
+                      "inverse-primary": "#006a65",
+                      "on-error": "#690005",
+                      "on-primary-fixed": "#00201e",
+                      "tertiary-container": "#e6deff",
+                      "inverse-on-surface": "#2b3137",
+                      "surface-bright": "#343a40",
+                      "on-primary": "#003734",
+                      "on-secondary": "#003259",
+                      "on-surface": "#dde3eb",
+                      "on-error-container": "#ffdad6",
+                      "surface": "#0e141a",
+                      "on-tertiary-fixed": "#1b0062",
+                      "on-tertiary-container": "#6544e9",
+                      "tertiary-fixed-dim": "#c9beff",
+                      "on-surface-variant": "#bacac7",
+                      "surface-tint": "#33dcd3",
+                      "surface-container-high": "#242b31",
+                      "on-secondary-fixed-variant": "#00497e",
+                      "on-primary-container": "#00716b",
+                      "secondary-fixed-dim": "#a0caff",
+                      "surface-dim": "#0e141a",
+                      "surface-container-lowest": "#090f14",
+                      "inverse-surface": "#dde3eb",
+                      "on-primary-fixed-variant": "#00504c",
+                      "primary": "#ffffff",
+                      "tertiary-fixed": "#e6deff",
+                      "error": "#ffb4ab",
+                      "on-tertiary": "#30009b",
+                      "on-secondary-container": "#002b4e"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "64px",
+                      "container-max": "1440px",
+                      "unit": "8px",
+                      "margin-mobile": "24px",
+                      "gutter": "32px"
+              },
+              "fontFamily": {
+                      "label-tech": ["Space Grotesk", "monospace"],
+                      "headline-lg": ["Anybody", "sans-serif"],
+                      "headline-lg-mobile": ["Anybody", "sans-serif"],
+                      "title-md": ["Space Grotesk", "sans-serif"],
+                      "body-lg": ["Hanken Grotesk", "sans-serif"],
+                      "display-xl": ["Anybody", "sans-serif"],
+                      "body-md": ["Hanken Grotesk", "sans-serif"]
+              },
+              "fontSize": {
+                      "label-tech": ["12px", { "lineHeight": "16px", "letterSpacing": "0.15em", "fontWeight": "600" }],
+                      "headline-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+                      "headline-lg-mobile": ["32px", { "lineHeight": "38px", "fontWeight": "700" }],
+                      "title-md": ["24px", { "lineHeight": "32px", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                      "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                      "display-xl": ["80px", { "lineHeight": "90px", "letterSpacing": "0.05em", "fontWeight": "800" }],
+                      "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- Custom cursor -->
+<div class="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+
+<!-- Cinematic letterbox intro -->
+<div class="letterbox top" aria-hidden="true"></div>
+<div class="letterbox bottom" aria-hidden="true"></div>
+
+<!-- Top Navigation Bar -->
+<header id="main-nav" class="fixed top-0 w-full z-50 bg-background/10 backdrop-blur-xl border-b border-white/15 shadow-[0_0_40px_rgba(51,220,211,0.1)]">
+<nav class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-unit max-w-container-max mx-auto">
+<a href="#" id="nav-logo" class="font-display-xl text-title-md tracking-tighter text-primary-fixed-dim uppercase" aria-label="Aetheris home"></a>
+<div class="hidden md:flex gap-8 items-center">
+<a class="nav-link font-label-tech text-label-tech text-primary-fixed border-b-2 border-primary-fixed pb-1 hover:text-primary-container transition-all duration-300" href="#megastructures" aria-current="page">Visions</a>
+<a class="nav-link font-label-tech text-label-tech text-on-surface-variant hover:text-primary-container transition-all duration-300" href="#megastructures">Projects</a>
+<a class="nav-link font-label-tech text-label-tech text-on-surface-variant hover:text-primary-container transition-all duration-300" href="#infrastructure">Innovation</a>
+<a class="nav-link font-label-tech text-label-tech text-on-surface-variant hover:text-primary-container transition-all duration-300" href="#anthology">Nexus</a>
+<a class="nav-link font-label-tech text-label-tech text-on-surface-variant hover:text-primary-container transition-all duration-300" href="#journal">Journal</a>
+</div>
+<div class="flex items-center gap-4 md:gap-6">
+<form class="hidden lg:flex items-center bg-surface-container-high/40 border border-outline-variant px-4 py-2 rounded-full" onsubmit="event.preventDefault();">
+<label for="nav-search" class="sr-only">Search Nexus</label>
+<span class="material-symbols-outlined text-primary-fixed-dim text-[20px]" aria-hidden="true">search</span>
+<input id="nav-search" name="q" class="bg-transparent border-none focus:ring-0 text-label-tech text-on-surface placeholder:text-outline p-0 ml-2 w-32" placeholder="Explore Nexus..." type="text"/>
+</form>
+<a href="#cta" class="magnetic-btn hidden md:inline-flex bg-primary-fixed-dim text-on-primary-fixed px-6 py-2 font-label-tech text-label-tech rounded-none hover:shadow-[0_0_15px_rgba(93,249,239,0.4)] transition-shadow">CONNECT</a>
+<button type="button" id="menu-btn" class="md:hidden material-symbols-outlined text-primary-fixed-dim text-3xl" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">menu</button>
+</div>
+</nav>
+</header>
+<!-- Mobile menu -->
+<div id="mobile-menu" class="fixed inset-0 z-40 bg-background pt-32 px-margin-mobile md:hidden" aria-hidden="true">
+<nav class="flex flex-col gap-6 font-display-xl text-headline-lg-mobile text-primary uppercase">
+<a href="#megastructures" class="hover:text-primary-fixed-dim transition-colors">Visions</a>
+<a href="#megastructures" class="hover:text-primary-fixed-dim transition-colors">Projects</a>
+<a href="#infrastructure" class="hover:text-primary-fixed-dim transition-colors">Innovation</a>
+<a href="#anthology" class="hover:text-primary-fixed-dim transition-colors">Nexus</a>
+<a href="#journal" class="hover:text-primary-fixed-dim transition-colors">Journal</a>
+</nav>
+<a href="#cta" class="mt-10 inline-block bg-primary-fixed-dim text-on-primary-fixed px-6 py-3 font-label-tech text-label-tech tracking-widest">CONNECT</a>
+</div>
+<!-- 1. Fullscreen Hero Section -->
+<header class="relative h-screen w-full flex items-center justify-center overflow-hidden" id="hero">
+<div class="hero-bg-layer absolute inset-0 z-0">
+<img loading="eager" class="w-full h-full object-cover opacity-40 brightness-50" alt="A cinematic low-angle of a neo-futurist city at twilight — monolithic glass towers with glowing cyan structural ribs piercing soft neon fog under a deep midnight blue sky" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDa6vK8O_p69OFZ2YeHwhr6F_n9szYSG1bANtg7PrVlvH2pEIun1XbzuA4hegsr7n_5962BMlbtCR5V6pjHif68UV-_vETYhYZW0AxHQ1BPo3gZpQPU91igOW_DyWV8UDMnWPTVCKvfSuqR4y08cIviLsCN5IltbgDBou_JZ3s5zL663ixvBAjxQo1eBt_rDrJZx2huW0uk-N7m72LsIurhhoByh_hV28x6bvXqNOG9Kb5KvxnZpaVYtMPqyTIpsBNl0wfBGwHoN7aD"/>
+<div class="absolute inset-0 bg-gradient-to-b from-background/20 via-transparent to-background"></div>
+</div>
+<div class="relative z-10 text-center px-margin-mobile max-w-4xl">
+<h1 class="font-display-xl leading-[0.95] tracking-tighter text-primary uppercase mb-4 animate-pulse-cyan text-[clamp(3.5rem,12vw,8rem)]">
+                Aetheris
+            </h1>
+<p class="hero-eyebrow font-label-tech text-label-tech text-primary-fixed tracking-[0.4em] uppercase mb-10 md:mb-12">
+                Orchestrating Future Civilizations
+            </p>
+<div class="hero-panel glass-panel p-6 md:p-8 max-w-xl mx-auto neon-glow-cyan">
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-8 leading-relaxed">
+                    Deploying algorithmic architecture and parametric urbanism to build the next epoch of human habitation.
+                </p>
+<div class="flex flex-col md:flex-row gap-4 justify-center">
+<a href="#megastructures" class="magnetic-btn inline-block border border-primary-fixed-dim text-primary-fixed-dim px-10 py-4 font-label-tech text-label-tech hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors duration-300 tracking-widest">
+                        COMMENCE EXPLORATION
+                    </a>
+</div>
+</div>
+</div>
+<!-- HUD Tickers -->
+<div class="absolute bottom-12 left-margin-desktop hidden lg:block font-label-tech text-[10px] text-primary-fixed-dim opacity-60 z-10">
+<div class="flex items-center gap-4 mb-2">
+<span class="w-2 h-2 bg-primary-fixed-dim rounded-full animate-pulse"></span>
+                LAT: 35.6895° N | LONG: 139.6917° E
+            </div>
+<div class="hologram-line w-48 mb-2"></div>
+<div>STATUS: OPTIMIZING GRID_NODES...</div>
+</div>
+</header>
+<!-- 2. AI-Powered Property Exploration -->
+<section id="search" class="py-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto border-t border-outline-variant/30">
+<div class="grid grid-cols-12 gap-gutter items-center">
+<form class="col-span-12 lg:col-span-5" onsubmit="event.preventDefault();" data-search>
+<span class="font-label-tech text-label-tech text-primary-fixed-dim mb-4 block" data-search-field>NEURAL SEARCH ENGINE</span>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-8" data-search-field>Locate Your Domain.</h2>
+<div class="space-y-6">
+<div class="relative group" data-search-field>
+<label for="sector-coord" class="font-label-tech text-[10px] text-outline-variant uppercase absolute -top-2 left-4 bg-background px-2">Sector Coordinate</label>
+<input id="sector-coord" name="sector" class="w-full bg-surface-container-lowest border border-outline-variant focus:border-primary-fixed-dim p-4 font-label-tech text-on-surface focus:ring-0" placeholder="e.g. SKY-ARCH-09" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4" data-search-field>
+<div class="relative group">
+<label for="habitation-class" class="font-label-tech text-[10px] text-outline-variant uppercase absolute -top-2 left-4 bg-background px-2">Habitation Class</label>
+<select id="habitation-class" name="class" class="w-full bg-surface-container-lowest border border-outline-variant focus:border-primary-fixed-dim p-4 font-label-tech text-on-surface focus:ring-0">
+<option>Aero-Loft</option>
+<option>Sub-Aqua Core</option>
+<option>Orbit Suite</option>
+</select>
+</div>
+<div class="relative group">
+<label for="atmos-quality" class="font-label-tech text-[10px] text-outline-variant uppercase absolute -top-2 left-4 bg-background px-2">Atmospheric Quality</label>
+<input id="atmos-quality" name="quality" class="w-full h-1 bg-outline-variant accent-primary-fixed-dim mt-6" type="range" min="0" max="100" defaultValue="60"/>
+</div>
+</div>
+<button type="submit" class="magnetic-btn w-full py-4 border border-primary-fixed text-primary-fixed hover:bg-primary-fixed/10 font-label-tech tracking-widest transition-colors" data-search-field>INITIALIZE QUERY</button>
+</div>
+</form>
+<div class="map-panel col-span-12 lg:col-span-7 relative h-[420px] md:h-[500px] glass-panel p-2 overflow-hidden">
+<div class="absolute top-4 left-4 z-10 flex gap-2">
+<span class="bg-primary-fixed-dim text-on-primary-fixed px-2 py-1 text-[10px] font-bold">LIVE FEED</span>
+<span class="bg-surface-container-highest text-on-surface px-2 py-1 text-[10px]">SCANNING NODES...</span>
+</div>
+<img loading="lazy" class="w-full h-full object-cover opacity-80" alt="A holographic top-down map of a futuristic city rendered in cyan wireframes over deep navy — parametric street grids, light-streak traffic paths, glowing coordinate points and monospaced data overlays" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBA1ENFvN13xaSAaybSvUX-SqmNClXJ8h_H8fzzhCU2kRB13WtM9pIvgK866Dlbd6kpQpYvlNY-0DQLrmsuOnzi_8PuV9F4egUxYKrwt6MEFoqDUlYe0xIi_OO9BkDjcnyBpw9M_yISe8bd4N7iV9OGuk7tGYo8xvdhef--_sTh1-yvzDBTiOqvcsE_3rCdVgQ26m0_7RKUfvoiQx8qgPZqlUl6f26XNLqK-zHvDOZosu_3GUDyNAqlISujvhj_sohfJ-ziHU2uIPCu"/>
+<div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(14,20,26,0.8)_100%)]"></div>
+</div>
+</div>
+</section>
+<!-- 3. Interactive Project Showcase -->
+<section id="megastructures" class="py-24 bg-surface-container-lowest">
+<div class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<div class="flex flex-col md:flex-row md:justify-between md:items-end gap-6 mb-12 md:mb-16">
+<div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary uppercase tracking-tight">Megastructures</h2>
+<p class="font-label-tech text-label-tech text-primary-fixed-dim">DEPLOYED ASSETS: VERIFIED</p>
+</div>
+<a href="#anthology" class="font-label-tech text-label-tech text-outline border-b border-outline pb-1 hover:text-primary-fixed-dim hover:border-primary-fixed-dim transition-colors self-start md:self-end">VIEW ALL SPECIFICATIONS</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+<article class="mega-card group relative overflow-hidden glass-panel" data-mega>
+<div class="h-80 md:h-96 relative">
+<img loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Nexus Prime — a neo-futurist megastructure with an asymmetric twisting tower of reflective black glass and glowing cyan neon strips, set against a dark, rain-streaked sky" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWvNH1cKTLeoWbo79j79Ld27-EoF2anpj187jUM4Eafz-O8gyir90blq4HtL39sumZATrUdcAMh9PTKkbwhga8-yaaSy6BrV2IHuz1UZT_qVwB45stLrGwcqyikwPNePwMtXlCg1dvraZyap2TC9jeM2BWdo1Kamr9hmuO7ShhCD7hNtNCQXnVWlcoSXOcht9tW9g6YEwQIm0ngil6Cqc3CsMboMaK_NyQoizNcFqEhZnzPhqb_2LVLw9rkIz9TJsxRoGeUCW1unDN"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-60"></div>
+</div>
+<div class="p-6 md:p-8 relative">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-title-md text-title-md text-primary">Nexus Prime</h3>
+<span class="font-label-tech text-[10px] text-primary-fixed-dim border border-primary-fixed-dim px-2">ACTIVE</span>
+</div>
+<div class="grid grid-cols-2 gap-4 border-t border-outline-variant pt-4">
+<div>
+<span class="font-label-tech text-[10px] text-outline block">ELEVATION</span>
+<span class="font-label-tech text-label-tech text-on-surface">1,240m</span>
+</div>
+<div>
+<span class="font-label-tech text-[10px] text-outline block">LOCATION</span>
+<span class="font-label-tech text-label-tech text-on-surface">Sector 01</span>
+</div>
+</div>
+<button type="button" class="mt-8 w-full py-3 bg-white/5 text-primary border border-white/10 hover:border-primary-fixed transition-colors font-label-tech text-label-tech">ACCESS SCHEMATICS</button>
+</div>
+</article>
+<article class="mega-card group relative overflow-hidden glass-panel" data-mega style="transition-delay: 140ms;">
+<div class="h-80 md:h-96 relative">
+<img loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Neo-Biosphere 07 — a sprawling organic megastructure with plant-like fractal patterns and bioluminescent materials under massive glass domes, lit by warm amber and cool cyan highlights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQxTaHrdg0IN1FLtHJx-x5d7C5ZqFZG8YlkRj5ZbxjmKslIf-iOpLPG-2AwKpZmuz73AmhTGZ2T4XzJ8RsmmRf-CyB_0KjzcslR_dn1ojcJk2LIzr17NPENVz0uq0tfgblc-kyjfS46ej7WcmaDhXOZQr1A-Lw3QWuGyCWyxQWmJfQ1Y7UdQzEZUvJoTdvxDPLOX_2dMOGoRXuvE4tdlaB9ruHJssYMuxNzG6NUrF-EfdVrFiGYLyAFFdyFqaevLH_VGJuIUOM3y0m"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-60"></div>
+</div>
+<div class="p-6 md:p-8 relative">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-title-md text-title-md text-primary">Neo-Biosphere 07</h3>
+<span class="font-label-tech text-[10px] text-primary-fixed-dim border border-primary-fixed-dim px-2">PRE-DEPLOY</span>
+</div>
+<div class="grid grid-cols-2 gap-4 border-t border-outline-variant pt-4">
+<div>
+<span class="font-label-tech text-[10px] text-outline block">VEGETATION %</span>
+<span class="font-label-tech text-label-tech text-on-surface">82.4%</span>
+</div>
+<div>
+<span class="font-label-tech text-[10px] text-outline block">YIELD</span>
+<span class="font-label-tech text-label-tech text-on-surface">90MW/H</span>
+</div>
+</div>
+<button type="button" class="mt-8 w-full py-3 bg-white/5 text-primary border border-white/10 hover:border-primary-fixed transition-colors font-label-tech text-label-tech">RESERVE HABITAT</button>
+</div>
+</article>
+<article class="mega-card group relative overflow-hidden glass-panel" data-mega style="transition-delay: 280ms;">
+<div class="h-80 md:h-96 relative">
+<img loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Aetheris Mono — a single razor-sharp obsidian spire rising from a desert landscape at dusk, its surface reflecting deep purple and orange sunset, interior lights forming a digital constellation pattern" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoskQlKoC1IzBfJVnuNtjsR-isKOlPoFF5iKiu6P5icvNisKfp03WiyFhqGe67Z2FkSA_gEKgnbCA-QgM9kRI8JD3XrWSJFqTPJ16mj0bQ-VdWUcGMs2ne5DG48NrmA7RcQnaDqB8xsDGPhXEPhkCBEsWbzXDVVJnX4YzrQc_JvS9VJi6LLQERaX9RpIeHZcKXBRvCeDgl9RfVSLe6R7HeKyGcwOEwLeFSvnwTTZ2TtdVxjpwJTnqIGQ9wNE2Jyd4xX6AtQ6zqGzr_"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-60"></div>
+</div>
+<div class="p-6 md:p-8 relative">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-title-md text-title-md text-primary">Aetheris Mono</h3>
+<span class="font-label-tech text-[10px] text-outline border border-outline px-2">OFF-GRID</span>
+</div>
+<div class="grid grid-cols-2 gap-4 border-t border-outline-variant pt-4">
+<div>
+<span class="font-label-tech text-[10px] text-outline block">DENSITY</span>
+<span class="font-label-tech text-label-tech text-on-surface">LOW-IMPACT</span>
+</div>
+<div>
+<span class="font-label-tech text-[10px] text-outline block">COMPLETED</span>
+<span class="font-label-tech text-label-tech text-on-surface">2044.12</span>
+</div>
+</div>
+<button type="button" class="mt-8 w-full py-3 bg-white/5 text-primary border border-white/10 hover:border-primary-fixed transition-colors font-label-tech text-label-tech">VIEW ARCHIVE</button>
+</div>
+</article>
+</div>
+</div>
+</section>
+<!-- 4. Smart City Ecosystem -->
+<section id="infrastructure" class="py-24 px-margin-mobile md:px-margin-desktop overflow-hidden">
+<div class="max-w-container-max mx-auto relative">
+<div class="grid grid-cols-12 gap-gutter items-center">
+<div class="col-span-12 lg:col-span-6 relative z-10">
+<h2 class="font-display-xl text-headline-lg-mobile md:text-headline-lg text-primary uppercase mb-12 tracking-tight">Intelligent<br/><span class="text-primary-fixed-dim">Infrastructure</span></h2>
+<div class="space-y-12">
+<div class="infra-feature flex gap-6 md:gap-8 group" data-infra>
+<div class="shrink-0 w-16 h-16 flex items-center justify-center border border-primary-fixed-dim group-hover:bg-primary-fixed-dim group-hover:text-on-primary-fixed transition-all duration-300">
+<span class="material-symbols-outlined text-[32px]">hub</span>
+</div>
+<div>
+<h3 class="font-title-md text-title-md text-primary mb-2">Decentralized Mesh</h3>
+<p class="font-body-md text-on-surface-variant max-w-sm">Self-healing utility grids that adapt to inhabitant load in real-time using quantum-edge processing.</p>
+</div>
+</div>
+<div class="infra-feature flex gap-6 md:gap-8 group" data-infra style="transition-delay: 140ms;">
+<div class="shrink-0 w-16 h-16 flex items-center justify-center border border-primary-fixed-dim group-hover:bg-primary-fixed-dim group-hover:text-on-primary-fixed transition-all duration-300">
+<span class="material-symbols-outlined text-[32px]">waves</span>
+</div>
+<div>
+<h3 class="font-title-md text-title-md text-primary mb-2">Parametric Fluidity</h3>
+<p class="font-body-md text-on-surface-variant max-w-sm">Architectural skins that breathe and shift to optimize thermal regulation and kinetic energy harvesting.</p>
+</div>
+</div>
+<div class="infra-feature flex gap-6 md:gap-8 group" data-infra style="transition-delay: 280ms;">
+<div class="shrink-0 w-16 h-16 flex items-center justify-center border border-primary-fixed-dim group-hover:bg-primary-fixed-dim group-hover:text-on-primary-fixed transition-all duration-300">
+<span class="material-symbols-outlined text-[32px]">token</span>
+</div>
+<div>
+<h3 class="font-title-md text-title-md text-primary mb-2">Digital Twin Sync</h3>
+<p class="font-body-md text-on-surface-variant max-w-sm">Every structural atom mirrored in the Nexus Metaverse for predictive maintenance and simulated expansion.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-6 relative mt-12 lg:mt-0">
+<div class="hud-ring aspect-square glass-panel p-8 md:p-12 rounded-full border-primary-fixed/20" data-hud>
+<div class="hud-ring-rotate w-full h-full border border-dashed border-primary-fixed-dim/30 rounded-full flex items-center justify-center">
+<div class="w-3/4 h-3/4 border border-solid border-primary-fixed-dim/50 rounded-full flex items-center justify-center relative">
+<span class="material-symbols-outlined text-[80px] text-primary-fixed-dim" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">architecture</span>
+<div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-4 bg-background px-4 font-label-tech text-label-tech text-primary">CORE_SYNC</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 5. Neo-Futurist Gallery — Awwwards anchor: pinned horizontal scroll-scrub -->
+<section id="anthology" class="anthology-pin border-y border-outline-variant/30">
+<div class="anthology-sticky">
+<div class="w-full">
+<div class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto mb-6 md:mb-10 flex items-baseline gap-6">
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">Visual Anthology</h2>
+<span class="hidden md:inline-block font-label-tech text-label-tech text-primary-fixed-dim">SCROLL TO TRAVERSE →</span>
+</div>
+<div class="anthology-track" id="anthology-track" data-drag-cursor>
+<figure class="anthology-tile shrink-0 w-[80vw] md:w-auto h-[55vh] md:h-[70vh] glass-panel overflow-hidden">
+<img loading="lazy" class="w-full h-full object-cover" alt="A wide-angle high-tech canyon at night with massive sky-bridges connecting vertical glass and steel cliffs, thousands of glowing drones forming mechanical-firefly patterns in the air" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVBtMnLXZkVBdSfJdW7W_q3AIR0hT43JNwq8eEObGEeZdh0JmZKQ-szi84Be9cO2yme9ZH9TDop3FboM8dhgEclmajLieJOIhjzM9R820WjKgsvS6HBVtNTX0190msKoSFyBsDXW_sKgB_nH5pWYegl0yBybOGTBe4dMkGxCNsPcgOchGT5KkFWT8akQ5BtxGBAlZrPXZ73QZZrDr1oYP6BAOcdqITmPgch2UANf0cqcuWOh4iA7K-9owa4agRPLfGnYfPqj4zDKDL"/>
+</figure>
+<figure class="anthology-tile shrink-0 w-[80vw] md:w-auto h-[55vh] md:h-[70vh] glass-panel overflow-hidden">
+<img loading="lazy" class="w-full h-full object-cover" alt="Interior of a futuristic Aetheris research lab — geometric white panels with integrated glowing interfaces, a central holographic tree of light and data streams" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdvXV4HZsLf5h6eleNfUN4BCq1aODK6FA6ZZrpqeCH5L89njh3YCNuyaJx48YZUjOH4H6tHrDVX3XpX4m5hBNzj3DU_X48I2CASWKyEPAV_OuexLZkgIAab52uETAOzBW4hfn-wEu8-tcEhqsH7MN60V2tE-6fLr3jZVmqnROzAFzkDDtYW9YyfF3iWEARI9R7ZH-r6n0LSJIO8W_Rm4GmY2lbzP0UHUDkQpIZkcwym3LPKY0D-x76jI0JRA01MmrlV6NuCVkWN5ex"/>
+</figure>
+<figure class="anthology-tile shrink-0 w-[80vw] md:w-auto h-[55vh] md:h-[70vh] glass-panel overflow-hidden">
+<img loading="lazy" class="w-full h-full object-cover" alt="A view from an orbital suite onto the illuminated night side of Earth, framed by the sleek metallic edge of a space station with glowing status indicators" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1grlOCcNAzkjqDs9JxD-beod3XLktuY7ZkY9-KpuAMsKXh7LzJBKpf8R-7ktFRBHuSzjIYjJ-cGI0aypV1bZ6mnAu7yteTsVbSXN5dpCmX2UUO3vzXZW7TFN9pmmP23iKxIz-JdcpQD4glm0jJjUhykbViOy5i-YPx18NVt-ujnKi1CuB07F7c9ho4GnHRRGjIA3rDM_t-Wv1OrkRxfLivS0DznvmO68daFxNjSpqYKbmuGeYZZznJWnvil8NiS8DLyxDWBg13YQX"/>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<!-- 6. Urban Innovation Timeline -->
+<section class="milestone-section py-24 px-margin-mobile md:px-margin-desktop max-w-3xl mx-auto" data-milestones>
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4 tracking-tight">Milestones</h2>
+<div class="hologram-line max-w-xs mx-auto"></div>
+</div>
+<div class="space-y-20 md:space-y-24 relative">
+<div class="absolute left-1/2 top-0 bottom-0 w-[1px] bg-outline-variant/30 -translate-x-1/2"></div>
+<span class="milestone-line" aria-hidden="true"></span>
+<div class="milestone-row relative flex items-center justify-between" data-milestone>
+<div class="w-[42%] md:w-[45%] text-right pr-2 md:pr-0">
+<span class="font-label-tech text-label-tech text-primary-fixed-dim mb-2 block">ERA 01</span>
+<h3 class="font-title-md text-title-md text-primary mb-2">Parametric Genesis</h3>
+<p class="font-body-md text-on-surface-variant text-sm md:text-base">First algorithmic construction of a multi-tiered habitation hub in Neo-Tokyo.</p>
+</div>
+<div class="milestone-dot z-10 w-4 h-4 bg-primary-fixed-dim rounded-full neon-glow-cyan outline outline-8 outline-background"></div>
+<div class="w-[42%] md:w-[45%] text-left pl-2 md:pl-0 font-display-xl text-title-md text-outline-variant/30">2029</div>
+</div>
+<div class="milestone-row relative flex items-center justify-between" data-milestone>
+<div class="w-[42%] md:w-[45%] text-right pr-2 md:pr-0 font-display-xl text-title-md text-outline-variant/30">2034</div>
+<div class="milestone-dot z-10 w-4 h-4 bg-primary-fixed-dim rounded-full neon-glow-cyan outline outline-8 outline-background"></div>
+<div class="w-[42%] md:w-[45%] text-left pl-2 md:pl-0">
+<span class="font-label-tech text-label-tech text-primary-fixed-dim mb-2 block">ERA 02</span>
+<h3 class="font-title-md text-title-md text-primary mb-2">Atmospheric Weaving</h3>
+<p class="font-body-md text-on-surface-variant text-sm md:text-base">Introduction of CO2-absorbing structural skins across the European Megalopolis.</p>
+</div>
+</div>
+<div class="milestone-row relative flex items-center justify-between" data-milestone>
+<div class="w-[42%] md:w-[45%] text-right pr-2 md:pr-0">
+<span class="font-label-tech text-label-tech text-primary-fixed-dim mb-2 block">ERA 03</span>
+<h3 class="font-title-md text-title-md text-primary mb-2">Nexus Deployment</h3>
+<p class="font-body-md text-on-surface-variant text-sm md:text-base">The global smart-grid integration, achieving a 100% renewable energy surplus.</p>
+</div>
+<div class="milestone-dot z-10 w-4 h-4 bg-primary-fixed-dim rounded-full neon-glow-cyan outline outline-8 outline-background"></div>
+<div class="w-[42%] md:w-[45%] text-left pl-2 md:pl-0 font-display-xl text-title-md text-outline-variant/30">2041</div>
+</div>
+</div>
+</section>
+<!-- 7. Technical Stats -->
+<section class="py-24 bg-primary-fixed-dim text-on-primary-fixed">
+<div class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+<div class="stat-block" data-stat>
+<span class="font-label-tech text-label-tech uppercase tracking-widest block mb-2">Habitants</span>
+<div class="font-display-xl text-[clamp(2.5rem,5vw,4rem)] font-bold" data-count-to="14.2" data-count-suffix="M" data-count-decimals="1">0.0M</div>
+<p class="font-label-tech text-[10px] mt-2">+12% GROWTH CYCLE</p>
+</div>
+<div class="stat-block" data-stat style="transition-delay: 120ms;">
+<span class="font-label-tech text-label-tech uppercase tracking-widest block mb-2">Energy Autonomy</span>
+<div class="font-display-xl text-[clamp(2.5rem,5vw,4rem)] font-bold" data-count-to="99.8" data-count-suffix="%" data-count-decimals="1">0.0%</div>
+<p class="font-label-tech text-[10px] mt-2">SOLAR/KINETIC FUSION</p>
+</div>
+<div class="stat-block" data-stat style="transition-delay: 240ms;">
+<span class="font-label-tech text-label-tech uppercase tracking-widest block mb-2">Response Latency</span>
+<div class="font-display-xl text-[clamp(2.5rem,5vw,4rem)] font-bold" data-count-to="0.02" data-count-suffix="ms" data-count-decimals="2">0.00ms</div>
+<p class="font-label-tech text-[10px] mt-2">QUANTUM EDGE SYNC</p>
+</div>
+</div>
+</section>
+<!-- 8. Architectural Philosophy -->
+<section id="philosophy" class="py-20 md:py-32 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<div class="grid grid-cols-12 gap-gutter items-center">
+<div class="col-span-12 md:col-span-4 mb-12 md:mb-0 overflow-hidden">
+<img loading="lazy" class="philosophy-img w-full h-[420px] md:h-[600px] object-cover" alt="A portrait-style architectural detail of a brutalist-futurist corner — raw concrete meeting polished chrome and neon tubes, deep shadows and sharp highlights emphasizing intellectual rigor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxNJafgM-GIJrlA2hpCQW6ZEEWogzJ9nhviq5yjzR7rbnpBnmivZBMpZa6IzHW5_Sfngsn6bgBL7LT1l9GKzxwmkDv4KEmiJakWWoo73BJo1gnlwuFI166-dN7qzMZQ_er2XyPxsatfqPS5td6QYRDaAparqD-hhy_6YmTrJEer9F-T3P2IP1wot6JTIKI0zS-Zpvc_T23Zud-7yf9GGK9RInay7dR5j0pnI-4B8lsoaSImG08vGeH6mhxUWAym6T0hR75KyJl8kK0"/>
+</div>
+<div class="col-span-12 md:col-span-7 md:col-start-6" data-phil>
+<span class="font-label-tech text-label-tech text-primary-fixed-dim mb-6 block">MANIFESTO 0.1</span>
+<h2 class="font-display-xl text-headline-lg-mobile md:text-headline-lg text-primary mb-12 leading-tight tracking-tight">
+<span class="phil-line"><span>Architecture is the</span></span>
+<span class="phil-line"><span>Hardware of Evolution.</span></span>
+</h2>
+<div class="space-y-8 font-body-lg text-body-lg text-on-surface-variant max-w-2xl" data-phil-body>
+<p>We reject the static. We believe that structures should be as dynamic as the data that flows through them. Every Aetheris project is a biological response to urban necessity, computed through millions of environmental simulations.</p>
+<p>Our philosophy is rooted in the "Digital Soul" — the idea that a building is not just stone and glass, but an active participant in the global network. It learns, it breathes, and it protects.</p>
+</div>
+<div class="mt-16 flex items-center gap-4" data-phil-author>
+<div class="w-12 h-[1px] bg-primary-fixed-dim"></div>
+<span class="font-label-tech text-label-tech text-primary uppercase">Elias Thorne, Head of Vision</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 9. Futuristic Journal & FAQ -->
+<section id="journal" class="py-24 bg-surface-container-low px-margin-mobile md:px-margin-desktop">
+<div class="max-w-container-max mx-auto">
+<div class="grid grid-cols-12 gap-gutter mb-16 md:mb-24">
+<div class="col-span-12 lg:col-span-8">
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-12 tracking-tight">The Journal</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<article class="journal-card glass-panel p-6 hover:bg-white/5 transition-colors group" data-journal>
+<span class="font-label-tech text-[10px] text-primary-fixed-dim">APR 24, 2046</span>
+<h3 class="font-title-md text-title-md text-primary mt-4 mb-4 group-hover:text-primary-fixed-dim transition-colors">Neural Mesh: Connecting Inhabitants Beyond Physicality</h3>
+<p class="font-body-md text-on-surface-variant mb-6">How our new integrated brain-link interface is redefining what it means to be 'home'.</p>
+<a class="font-label-tech text-label-tech text-primary uppercase inline-flex items-center gap-2 hover:text-primary-fixed-dim transition-colors" href="#journal">READ TRANSMISSION <span class="material-symbols-outlined text-[16px]">arrow_forward</span></a>
+</article>
+<article class="journal-card glass-panel p-6 hover:bg-white/5 transition-colors group" data-journal style="transition-delay: 140ms;">
+<span class="font-label-tech text-[10px] text-primary-fixed-dim">MAR 12, 2046</span>
+<h3 class="font-title-md text-title-md text-primary mt-4 mb-4 group-hover:text-primary-fixed-dim transition-colors">Harvesting the Void: Sub-Aqua Habitats</h3>
+<p class="font-body-md text-on-surface-variant mb-6">Exploring the architecture of pressure and the beauty of deep-sea bioluminescence.</p>
+<a class="font-label-tech text-label-tech text-primary uppercase inline-flex items-center gap-2 hover:text-primary-fixed-dim transition-colors" href="#journal">READ TRANSMISSION <span class="material-symbols-outlined text-[16px]">arrow_forward</span></a>
+</article>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-4">
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-12 tracking-tight">Queries</h2>
+<div class="space-y-1">
+<div class="faq-item" data-faq>
+<button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-1">
+<h3 class="font-label-tech text-label-tech text-primary">CITIZENSHIP PROTOCOLS</h3>
+<span class="faq-icon material-symbols-outlined" aria-hidden="true">add</span>
+</button>
+<div class="faq-content" id="faq-1" role="region">
+<div>
+<p class="font-body-md text-sm">Every habitat purchase includes automatic Tier-1 Aetheris Citizenship, granting access to the Global Nexus and priority transit.</p>
+</div>
+</div>
+</div>
+<div class="faq-item" data-faq style="transition-delay: 80ms;">
+<button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-2">
+<h3 class="font-label-tech text-label-tech text-primary">ENERGY COMPLIANCE</h3>
+<span class="faq-icon material-symbols-outlined" aria-hidden="true">add</span>
+</button>
+<div class="faq-content" id="faq-2" role="region">
+<div>
+<p class="font-body-md text-sm">All structures are self-powering. Excess energy is traded on the local micro-grid for Aether Credits.</p>
+</div>
+</div>
+</div>
+<div class="faq-item" data-faq style="transition-delay: 160ms;">
+<button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-3">
+<h3 class="font-label-tech text-label-tech text-primary">TERRAFORMING LIMITS</h3>
+<span class="faq-icon material-symbols-outlined" aria-hidden="true">add</span>
+</button>
+<div class="faq-content" id="faq-3" role="region">
+<div>
+<p class="font-body-md text-sm">We strictly adhere to the 2040 Bio-Preservation Act. All expansion is vertical or subterranean.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 10. Cinematic CTA -->
+<section id="cta" class="relative py-20 md:py-48 w-full flex items-center justify-center overflow-hidden" data-cta>
+<div class="absolute inset-0 bg-gradient-to-br from-on-tertiary-fixed-variant via-background to-on-primary-fixed opacity-60"></div>
+<div class="absolute inset-0 z-0">
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary-fixed-dim/10 rounded-full blur-[120px] animate-pulse-cyan"></div>
+</div>
+<div class="relative z-10 text-center px-margin-mobile max-w-4xl">
+<h2 class="font-display-xl text-primary mb-8 leading-[0.95] uppercase tracking-tighter text-[clamp(2.5rem,8vw,5rem)]">
+<span class="cta-line"><span>BUILD THE VISION.</span></span>
+</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-12" data-cta-body>The architecture of tomorrow is a collaboration between man and machine. Begin your legacy within the Aetheris ecosystem today.</p>
+<a href="#footer" class="magnetic-btn inline-block bg-primary text-background px-12 py-5 font-label-tech text-label-tech tracking-[0.3em] font-bold hover:bg-primary-fixed-dim transition-colors" data-cta-btn>INITIALIZE PROTOCOL</a>
+</div>
+</section>
+<!-- 11. Massive Layered Footer -->
+<footer id="footer" class="w-full relative bottom-0 bg-surface-container-lowest border-t border-outline-variant">
+<div class="grid grid-cols-12 gap-gutter px-margin-mobile md:px-margin-desktop py-24 max-w-container-max mx-auto">
+<div class="footer-col col-span-12 lg:col-span-4 mb-16 lg:mb-0" data-footer-col>
+<div class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary uppercase mb-8 tracking-tight">Aetheris</div>
+<p class="font-body-md text-on-surface-variant mb-8 max-w-xs leading-relaxed">Structural intelligence for the post-anthropocene. Designing habitats that breathe, learn, and endure.</p>
+<div class="flex gap-4">
+<a href="#" aria-label="Visit Aetheris on the web" class="w-10 h-10 flex items-center justify-center border border-outline-variant hover:border-primary-fixed-dim transition-colors">
+<span class="material-symbols-outlined text-[20px]">public</span>
+</a>
+<a href="#" aria-label="Aetheris developer terminal" class="w-10 h-10 flex items-center justify-center border border-outline-variant hover:border-primary-fixed-dim transition-colors">
+<span class="material-symbols-outlined text-[20px]">terminal</span>
+</a>
+<a href="#" aria-label="Aetheris Nexus interface" class="w-10 h-10 flex items-center justify-center border border-outline-variant hover:border-primary-fixed-dim transition-colors">
+<span class="material-symbols-outlined text-[20px]">memory</span>
+</a>
+</div>
+</div>
+<div class="footer-col col-span-6 lg:col-span-2" data-footer-col style="transition-delay: 100ms;">
+<h5 class="font-title-md text-title-md text-primary mb-8">Ecosystem</h5>
+<ul class="space-y-4 font-body-md text-on-surface-variant">
+<li><a class="hover:text-primary transition-colors duration-200" href="#infrastructure">Infrastructure</a></li>
+<li><a class="hover:text-primary transition-colors duration-200" href="#anthology">Parametric Data</a></li>
+<li><a class="hover:text-primary transition-colors duration-200" href="#megastructures">Nexus Sync</a></li>
+<li><a class="hover:text-primary transition-colors duration-200" href="#journal">Global Awards</a></li>
+</ul>
+</div>
+<div class="footer-col col-span-6 lg:col-span-2" data-footer-col style="transition-delay: 200ms;">
+<h5 class="font-title-md text-title-md text-primary mb-8">Resources</h5>
+<ul class="space-y-4 font-body-md text-on-surface-variant">
+<li><a class="hover:text-primary transition-colors duration-200" href="#philosophy">Sustainability</a></li>
+<li><a class="hover:text-primary transition-colors duration-200" href="#journal">Press</a></li>
+<li><a class="hover:text-primary transition-colors duration-200" href="#">Legal</a></li>
+<li><a class="hover:text-primary transition-colors duration-200" href="#">API Documentation</a></li>
+</ul>
+</div>
+<div class="footer-col col-span-12 lg:col-span-4 mt-16 lg:mt-0" data-footer-col style="transition-delay: 300ms;">
+<h5 class="font-title-md text-title-md text-primary mb-8">Updates</h5>
+<form id="newsletter-form" class="flex border-b border-outline-variant pb-2" novalidate>
+<label for="newsletter-email" class="sr-only">Email channel</label>
+<input id="newsletter-email" name="email" required type="email" class="bg-transparent border-none focus:ring-0 w-full font-label-tech text-on-surface uppercase placeholder:text-outline-variant" placeholder="COMM_CHANNEL@AETHERIS.COM"/>
+<button type="submit" class="material-symbols-outlined text-primary-fixed-dim" aria-label="Subscribe">arrow_forward</button>
+</form>
+<p id="newsletter-msg" class="font-label-tech text-[10px] text-primary-fixed-dim mt-4 opacity-0 transition-opacity duration-500" aria-live="polite">CHANNEL ESTABLISHED · TRANSMISSION INCOMING.</p>
+<p class="font-label-tech text-[10px] text-outline mt-4">JOIN THE NEURAL NETWORK FOR EXCLUSIVE PROJECT DROPS.</p>
+</div>
+<div class="col-span-12 pt-16 md:pt-24 border-t border-outline-variant/30 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8">
+<div class="font-label-tech text-[10px] text-outline uppercase tracking-widest">
+                    © 2026 Aetheris Structural Intelligence. All rights reserved. Built for the Post-Anthropocene.
+                </div>
+<div class="flex flex-col md:flex-row gap-3 md:gap-8 font-label-tech text-[10px] text-outline uppercase">
+<span>SECURITY: QUANTUM-LOCKED</span>
+<span>STATUS: ALL NODES NOMINAL</span>
+</div>
+</div>
+</div>
+</footer>
+<script>
+    (() => {
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+        // ---------- Letterbox intro ----------
+        if (!reduceMotion) {
+            requestAnimationFrame(() => {
+                document.querySelectorAll('.letterbox').forEach(b => b.classList.add('retract'));
+            });
+        } else {
+            document.querySelectorAll('.letterbox').forEach(b => b.remove());
+        }
+
+        // ---------- Nav: Aetheris letter stagger ----------
+        const logo = document.getElementById('nav-logo');
+        if (logo) {
+            const text = 'AETHERIS';
+            logo.innerHTML = '';
+            [...text].forEach((ch, i) => {
+                const s = document.createElement('span');
+                s.className = 'nav-letter';
+                s.textContent = ch;
+                s.style.animationDelay = (0.07 * i + 0.6) + 's'; // start after letterbox
+                logo.appendChild(s);
+            });
+        }
+
+        // ---------- Mobile menu ----------
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const setMenu = (open) => {
+            mobileMenu.classList.toggle('open', open);
+            mobileMenu.setAttribute('aria-hidden', String(!open));
+            menuBtn.setAttribute('aria-expanded', String(open));
+            menuBtn.textContent = open ? 'close' : 'menu';
+            document.body.style.overflow = open ? 'hidden' : '';
+        };
+        menuBtn?.addEventListener('click', () => setMenu(!mobileMenu.classList.contains('open')));
+        mobileMenu?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+
+        // ---------- IO factory ----------
+        const observe = (selector, cb, opts = {}) => {
+            const io = new IntersectionObserver((entries, obs) => {
+                entries.forEach(e => {
+                    if (e.isIntersecting) {
+                        cb(e.target);
+                        obs.unobserve(e.target);
+                    }
+                });
+            }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px', ...opts });
+            document.querySelectorAll(selector).forEach(el => io.observe(el));
+        };
+
+        observe('[data-search]', el => el.classList.add('in'));
+        observe('.map-panel', el => el.classList.add('in'));
+        observe('[data-mega]', el => el.classList.add('in'));
+        observe('[data-infra]', el => el.classList.add('in'));
+        observe('[data-hud]', el => el.classList.add('in'));
+        observe('[data-milestones]', el => {
+            el.classList.add('in');
+            el.querySelectorAll('[data-milestone]').forEach((m, i) => {
+                setTimeout(() => m.classList.add('in'), 220 + i * 220);
+            });
+        });
+        observe('.philosophy-img', el => el.classList.add('in'));
+        observe('[data-phil]', el => el.classList.add('in'));
+        observe('[data-journal]', el => el.classList.add('in'));
+        observe('[data-faq]', el => el.classList.add('in'));
+        observe('[data-cta]', el => el.classList.add('in'));
+        observe('[data-footer-col]', el => el.classList.add('in'));
+
+        // ---------- Stats count-up ----------
+        const animateCount = (el) => {
+            const target = parseFloat(el.dataset.countTo);
+            const decimals = parseInt(el.dataset.countDecimals || '0', 10);
+            const prefix = el.dataset.countPrefix || '';
+            const suffix = el.dataset.countSuffix || '';
+            const duration = 1700;
+            const start = performance.now();
+            const ease = (t) => 1 - Math.pow(1 - t, 3);
+            const tick = (now) => {
+                const t = Math.min(1, (now - start) / duration);
+                const v = target * ease(t);
+                el.textContent = prefix + (decimals ? v.toFixed(decimals) : Math.round(v).toLocaleString()) + suffix;
+                if (t < 1) requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+        };
+        observe('[data-stat]', block => {
+            block.classList.add('in');
+            const num = block.querySelector('[data-count-to]');
+            if (!num) return;
+            if (reduceMotion) {
+                const dec = parseInt(num.dataset.countDecimals || '0', 10);
+                num.textContent = (num.dataset.countPrefix || '') +
+                    parseFloat(num.dataset.countTo).toFixed(dec) +
+                    (num.dataset.countSuffix || '');
+            } else {
+                animateCount(num);
+            }
+        });
+
+        // ---------- FAQ accordion ----------
+        document.querySelectorAll('.faq-trigger').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.closest('.faq-item');
+                item.parentElement.querySelectorAll('.faq-item.open').forEach(other => {
+                    if (other !== item) {
+                        other.classList.remove('open');
+                        other.querySelector('.faq-trigger')?.setAttribute('aria-expanded', 'false');
+                    }
+                });
+                const opening = !item.classList.contains('open');
+                item.classList.toggle('open', opening);
+                btn.setAttribute('aria-expanded', String(opening));
+            });
+        });
+
+        // ---------- Newsletter ----------
+        const nlForm = document.getElementById('newsletter-form');
+        const nlMsg = document.getElementById('newsletter-msg');
+        nlForm?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const input = document.getElementById('newsletter-email');
+            if (!input.value || !input.checkValidity()) { input.focus(); return; }
+            nlMsg.classList.remove('opacity-0');
+            input.value = '';
+            setTimeout(() => nlMsg.classList.add('opacity-0'), 4000);
+        });
+
+        // ---------- Hero mouse parallax ----------
+        if (!reduceMotion && !isTouch) {
+            const heroBg = document.querySelector('.hero-bg-layer');
+            const hero = document.getElementById('hero');
+            if (heroBg && hero) {
+                hero.addEventListener('pointermove', (e) => {
+                    const r = hero.getBoundingClientRect();
+                    const x = (e.clientX - r.left) / r.width - 0.5;
+                    const y = (e.clientY - r.top) / r.height - 0.5;
+                    heroBg.style.transform = `translate(${x * -20}px, ${y * -20}px) scale(1.05)`;
+                });
+                hero.addEventListener('pointerleave', () => { heroBg.style.transform = 'translate(0,0) scale(1)'; });
+            }
+        }
+
+        // ---------- Custom cursor + magnetic ----------
+        if (!reduceMotion && !isTouch) {
+            const dot = document.querySelector('.cursor-dot');
+            const ring = document.querySelector('.cursor-ring');
+            if (dot && ring) {
+                let dotX = innerWidth / 2, dotY = innerHeight / 2;
+                let ringX = dotX, ringY = dotY;
+                let targetX = dotX, targetY = dotY;
+                const lerp = (a, b, n) => a + (b - a) * n;
+                addEventListener('pointermove', (e) => { targetX = e.clientX; targetY = e.clientY; }, { passive: true });
+                const tick = () => {
+                    dotX = lerp(dotX, targetX, 0.55);
+                    dotY = lerp(dotY, targetY, 0.55);
+                    ringX = lerp(ringX, targetX, 0.18);
+                    ringY = lerp(ringY, targetY, 0.18);
+                    dot.style.transform = `translate(${dotX}px, ${dotY}px) translate(-50%,-50%)`;
+                    ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%,-50%)`;
+                    requestAnimationFrame(tick);
+                };
+                tick();
+                const interactive = 'a, button, [data-mega], [data-journal], [data-drag-cursor]';
+                document.querySelectorAll(interactive).forEach(el => {
+                    el.addEventListener('pointerenter', () => {
+                        document.body.classList.add('cursor-hover');
+                        if (el.matches('[data-drag-cursor]')) {
+                            document.body.classList.add('cursor-label'); ring.textContent = 'DRAG';
+                        } else if (el.matches('[data-mega]') && el.tagName === 'ARTICLE') {
+                            document.body.classList.add('cursor-label'); ring.textContent = 'VIEW';
+                        }
+                    });
+                    el.addEventListener('pointerleave', () => {
+                        document.body.classList.remove('cursor-hover', 'cursor-label');
+                        ring.textContent = '';
+                    });
+                });
+            }
+            document.querySelectorAll('.magnetic-btn').forEach(btn => {
+                const strength = 0.18;
+                btn.addEventListener('pointermove', (e) => {
+                    const r = btn.getBoundingClientRect();
+                    const x = e.clientX - (r.left + r.width / 2);
+                    const y = e.clientY - (r.top + r.height / 2);
+                    btn.style.transform = `translate(${x * strength}px, ${y * strength}px)`;
+                });
+                btn.addEventListener('pointerleave', () => { btn.style.transform = ''; });
+            });
+        }
+
+        // ---------- Smooth anchor scroll fallback ----------
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', (e) => {
+                const id = a.getAttribute('href');
+                if (id.length <= 1) return;
+                const target = document.querySelector(id);
+                if (!target) return;
+                e.preventDefault();
+                target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+            });
+        });
+
+        // ---------- Lenis + pinned horizontal anthology (Awwwards anchor) ----------
+        if (!reduceMotion) {
+            const waitForLibs = (cb) => {
+                if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && typeof Lenis !== 'undefined') return cb();
+                setTimeout(() => waitForLibs(cb), 40);
+            };
+            waitForLibs(() => {
+                gsap.registerPlugin(ScrollTrigger);
+                const lenis = new Lenis({
+                    duration: 1.2,
+                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                    smoothWheel: true
+                });
+                lenis.on('scroll', ScrollTrigger.update);
+                gsap.ticker.add((time) => lenis.raf(time * 1000));
+                gsap.ticker.lagSmoothing(0);
+
+                // Anthology horizontal scroll-pin (desktop only)
+                const isDesktop = window.matchMedia('(min-width: 768px)').matches;
+                const track = document.getElementById('anthology-track');
+                if (isDesktop && track) {
+                    const distance = () => track.scrollWidth - innerWidth + 64;
+                    gsap.to(track, {
+                        x: () => -distance(),
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: '.anthology-pin',
+                            start: 'top top',
+                            end: 'bottom bottom',
+                            scrub: 0.6,
+                            invalidateOnRefresh: true
+                        }
+                    });
+                }
+            });
+        }
+    })();
+    </script>
+</body></html>
