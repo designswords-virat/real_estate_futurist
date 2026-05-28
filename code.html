@@ -224,51 +224,46 @@
         }
 
         /* ============================================================
-           SECTION 6 (anchor) · VISUAL ANTHOLOGY — pinned horizontal scrub
+           SECTION 6 (anchor) · VISUAL ANTHOLOGY — full-viewport sticky horizontal scroll
+           (modern's Selected Projects pattern, ported here)
            ============================================================ */
-        /* Mobile fallback: horizontal swipe-able snap scroller */
-        .anthology-track {
-            display: flex;
-            gap: 1rem;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-            padding-inline: 24px;
-            padding-bottom: 1rem;
+        .anthology-section { position: relative; }
+        .anthology-pin { position: relative; }
+        .anthology-pin-inner { position: relative; }
+        .anthology-track-wrap { overflow: hidden; }
+        .anthology-track { will-change: transform; }
+        .anthology-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: rgba(93, 249, 239, 0.3);
+            border: 0; padding: 0; cursor: pointer;
+            transition: background 0.4s cubic-bezier(0.22,1,0.36,1),
+                        width 0.4s cubic-bezier(0.22,1,0.36,1),
+                        border-radius 0.4s cubic-bezier(0.22,1,0.36,1);
         }
-        .anthology-track > .anthology-tile { scroll-snap-align: start; }
-        .anthology-track::-webkit-scrollbar { display: none; }
-        .anthology-track { scrollbar-width: none; }
-
+        .anthology-dot.active {
+            background: #5df9ef;
+            width: 28px;
+            border-radius: 6px;
+            box-shadow: 0 0 12px rgba(93, 249, 239, 0.6);
+        }
+        .anthology-dot:hover { background: rgba(93, 249, 239, 0.7); }
         @media (min-width: 768px) {
-            .anthology-pin {
-                position: relative;
-                height: 300vh; /* sticky 100vh + 200vh of horizontal scrub */
-            }
-            .anthology-sticky {
+            /* 3 cards → wrap height = 300vh. Sticky 100vh; remaining 200vh drives horizontal transform. */
+            .anthology-pin { height: 300vh; }
+            .anthology-pin-inner {
                 position: sticky; top: 0;
                 height: 100vh;
+                width: 100%;
                 overflow: hidden;
-                display: flex; align-items: center;
-            }
-            .anthology-track {
-                display: flex; gap: 32px;
-                padding-inline: 64px;
-                overflow-x: visible;       /* GSAP drives x-translate on desktop */
-                scroll-snap-type: none;
-                will-change: transform;
-            }
-            .anthology-track > .anthology-tile {
-                flex: 0 0 70vw; max-width: 900px;
-                height: 70vh;
-                scroll-snap-align: none;
             }
         }
-        .anthology-tile img {
-            transition: filter 0.7s ease, transform 1.0s cubic-bezier(0.22,1,0.36,1);
-            filter: grayscale(1) brightness(0.85);
+        @media (prefers-reduced-motion: reduce) {
+            .anthology-pin { height: auto !important; }
+            .anthology-pin-inner { position: static !important; height: auto !important; overflow: visible !important; }
+            .anthology-track { transform: none !important; }
+            .anthology-track-wrap { overflow-x: auto !important; }
         }
-        .anthology-tile:hover img { filter: grayscale(0) brightness(1); transform: scale(1.04); }
 
         /* ============================================================
            SECTION 7 · MILESTONES — vertical line draws + sequential markers
@@ -405,9 +400,9 @@
             .letterbox { display: none; }
             .philosophy-img { clip-path: inset(0 0 0 0) !important; }
             .anthology-pin { height: auto !important; }
-            .anthology-sticky { position: static !important; height: auto !important; overflow: visible !important; }
-            .anthology-track { flex-wrap: wrap; padding-inline: 0; }
-            .anthology-tile img { filter: none !important; }
+            .anthology-pin-inner { position: static !important; height: auto !important; overflow: visible !important; }
+            .anthology-track { transform: none !important; }
+            .anthology-track-wrap { overflow-x: auto !important; }
             .map-panel::after { display: none; }
         }
     </style>
@@ -747,24 +742,54 @@
 </div>
 </div>
 </section>
-<!-- 5. Neo-Futurist Gallery — Awwwards anchor: pinned horizontal scroll-scrub -->
-<section id="anthology" class="anthology-pin border-y border-outline-variant/30 py-16 md:py-0">
-<div class="anthology-sticky">
-<div class="w-full">
-<div class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto mb-6 md:mb-10 flex items-baseline gap-6">
-<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">Visual Anthology</h2>
-<span class="hidden md:inline-block font-label-tech text-label-tech text-primary-fixed-dim">SCROLL TO TRAVERSE →</span>
+<!-- 5. Visual Anthology — full-viewport sticky horizontal scroll (3 frames) -->
+<section id="anthology" class="anthology-section bg-background border-y border-outline-variant/30">
+<div class="anthology-pin">
+<div class="anthology-pin-inner">
+<!-- Header — relative on mobile (above cards), absolute overlay on desktop -->
+<div class="anthology-header relative px-margin-mobile pt-12 pb-6 max-w-3xl z-20 md:absolute md:top-16 md:left-margin-desktop md:px-0 md:pt-0 md:pb-0 md:pointer-events-none">
+<span class="font-label-tech text-label-tech text-primary-fixed-dim uppercase mb-3 block tracking-widest md:drop-shadow-lg">Visual Anthology</span>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary md:text-white leading-tight md:drop-shadow-2xl tracking-tight">Frames from the future.</h2>
 </div>
-<div class="anthology-track" id="anthology-track" data-drag-cursor>
-<figure class="anthology-tile shrink-0 w-[80vw] md:w-auto h-[55vh] md:h-[70vh] glass-panel overflow-hidden">
-<img loading="lazy" class="w-full h-full object-cover" alt="A wide-angle high-tech canyon at night with massive sky-bridges connecting vertical glass and steel cliffs, thousands of glowing drones forming mechanical-firefly patterns in the air" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVBtMnLXZkVBdSfJdW7W_q3AIR0hT43JNwq8eEObGEeZdh0JmZKQ-szi84Be9cO2yme9ZH9TDop3FboM8dhgEclmajLieJOIhjzM9R820WjKgsvS6HBVtNTX0190msKoSFyBsDXW_sKgB_nH5pWYegl0yBybOGTBe4dMkGxCNsPcgOchGT5KkFWT8akQ5BtxGBAlZrPXZ73QZZrDr1oYP6BAOcdqITmPgch2UANf0cqcuWOh4iA7K-9owa4agRPLfGnYfPqj4zDKDL"/>
+<!-- Cards track: full-width mobile (h-[65vh]), full-viewport desktop (h-screen) -->
+<div class="anthology-track-wrap">
+<div class="anthology-track flex gap-0 overflow-x-auto md:overflow-visible no-scrollbar snap-x snap-mandatory md:snap-none select-none" id="anthology-scroll">
+<!-- Frame 01 -->
+<figure class="anthology-card snap-start flex-none w-screen h-[65vh] md:h-screen relative">
+<img loading="lazy" class="absolute inset-0 w-full h-full object-cover" alt="A wide-angle high-tech canyon at night with massive sky-bridges connecting vertical glass and steel cliffs, thousands of glowing drones forming mechanical-firefly patterns in the air" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVBtMnLXZkVBdSfJdW7W_q3AIR0hT43JNwq8eEObGEeZdh0JmZKQ-szi84Be9cO2yme9ZH9TDop3FboM8dhgEclmajLieJOIhjzM9R820WjKgsvS6HBVtNTX0190msKoSFyBsDXW_sKgB_nH5pWYegl0yBybOGTBe4dMkGxCNsPcgOchGT5KkFWT8akQ5BtxGBAlZrPXZ73QZZrDr1oYP6BAOcdqITmPgch2UANf0cqcuWOh4iA7K-9owa4agRPLfGnYfPqj4zDKDL"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-black/35 pointer-events-none"></div>
+<figcaption class="absolute bottom-6 left-margin-mobile md:bottom-32 md:left-margin-desktop bg-background/70 backdrop-blur-md border border-primary-fixed-dim/30 p-6 md:p-8 max-w-md z-10">
+<p class="font-label-tech text-label-tech text-primary-fixed-dim uppercase tracking-widest mb-2">Frame 01</p>
+<h4 class="font-headline-md text-xl md:text-3xl text-white">Neon Canyon</h4>
+</figcaption>
 </figure>
-<figure class="anthology-tile shrink-0 w-[80vw] md:w-auto h-[55vh] md:h-[70vh] glass-panel overflow-hidden">
-<img loading="lazy" class="w-full h-full object-cover" alt="Interior of a futuristic Aetheris research lab — geometric white panels with integrated glowing interfaces, a central holographic tree of light and data streams" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdvXV4HZsLf5h6eleNfUN4BCq1aODK6FA6ZZrpqeCH5L89njh3YCNuyaJx48YZUjOH4H6tHrDVX3XpX4m5hBNzj3DU_X48I2CASWKyEPAV_OuexLZkgIAab52uETAOzBW4hfn-wEu8-tcEhqsH7MN60V2tE-6fLr3jZVmqnROzAFzkDDtYW9YyfF3iWEARI9R7ZH-r6n0LSJIO8W_Rm4GmY2lbzP0UHUDkQpIZkcwym3LPKY0D-x76jI0JRA01MmrlV6NuCVkWN5ex"/>
+<!-- Frame 02 -->
+<figure class="anthology-card snap-start flex-none w-screen h-[65vh] md:h-screen relative">
+<img loading="lazy" class="absolute inset-0 w-full h-full object-cover" alt="Interior of a futuristic Aetheris research lab — geometric white panels with integrated glowing interfaces, a central holographic tree of light and data streams" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdvXV4HZsLf5h6eleNfUN4BCq1aODK6FA6ZZrpqeCH5L89njh3YCNuyaJx48YZUjOH4H6tHrDVX3XpX4m5hBNzj3DU_X48I2CASWKyEPAV_OuexLZkgIAab52uETAOzBW4hfn-wEu8-tcEhqsH7MN60V2tE-6fLr3jZVmqnROzAFzkDDtYW9YyfF3iWEARI9R7ZH-r6n0LSJIO8W_Rm4GmY2lbzP0UHUDkQpIZkcwym3LPKY0D-x76jI0JRA01MmrlV6NuCVkWN5ex"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-black/35 pointer-events-none"></div>
+<figcaption class="absolute bottom-6 left-margin-mobile md:bottom-32 md:left-margin-desktop bg-background/70 backdrop-blur-md border border-primary-fixed-dim/30 p-6 md:p-8 max-w-md z-10">
+<p class="font-label-tech text-label-tech text-primary-fixed-dim uppercase tracking-widest mb-2">Frame 02</p>
+<h4 class="font-headline-md text-xl md:text-3xl text-white">Research Lab</h4>
+</figcaption>
 </figure>
-<figure class="anthology-tile shrink-0 w-[80vw] md:w-auto h-[55vh] md:h-[70vh] glass-panel overflow-hidden">
-<img loading="lazy" class="w-full h-full object-cover" alt="A view from an orbital suite onto the illuminated night side of Earth, framed by the sleek metallic edge of a space station with glowing status indicators" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1grlOCcNAzkjqDs9JxD-beod3XLktuY7ZkY9-KpuAMsKXh7LzJBKpf8R-7ktFRBHuSzjIYjJ-cGI0aypV1bZ6mnAu7yteTsVbSXN5dpCmX2UUO3vzXZW7TFN9pmmP23iKxIz-JdcpQD4glm0jJjUhykbViOy5i-YPx18NVt-ujnKi1CuB07F7c9ho4GnHRRGjIA3rDM_t-Wv1OrkRxfLivS0DznvmO68daFxNjSpqYKbmuGeYZZznJWnvil8NiS8DLyxDWBg13YQX"/>
+<!-- Frame 03 -->
+<figure class="anthology-card snap-start flex-none w-screen h-[65vh] md:h-screen relative">
+<img loading="lazy" class="absolute inset-0 w-full h-full object-cover" alt="A view from an orbital suite onto the illuminated night side of Earth, framed by the sleek metallic edge of a space station with glowing status indicators" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1grlOCcNAzkjqDs9JxD-beod3XLktuY7ZkY9-KpuAMsKXh7LzJBKpf8R-7ktFRBHuSzjIYjJ-cGI0aypV1bZ6mnAu7yteTsVbSXN5dpCmX2UUO3vzXZW7TFN9pmmP23iKxIz-JdcpQD4glm0jJjUhykbViOy5i-YPx18NVt-ujnKi1CuB07F7c9ho4GnHRRGjIA3rDM_t-Wv1OrkRxfLivS0DznvmO68daFxNjSpqYKbmuGeYZZznJWnvil8NiS8DLyxDWBg13YQX"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-black/35 pointer-events-none"></div>
+<figcaption class="absolute bottom-6 left-margin-mobile md:bottom-32 md:left-margin-desktop bg-background/70 backdrop-blur-md border border-primary-fixed-dim/30 p-6 md:p-8 max-w-md z-10">
+<p class="font-label-tech text-label-tech text-primary-fixed-dim uppercase tracking-widest mb-2">Frame 03</p>
+<h4 class="font-headline-md text-xl md:text-3xl text-white">Orbital Suite</h4>
+</figcaption>
 </figure>
+</div>
+</div>
+<!-- Dots — normal flow below carousel on mobile, absolute overlay on desktop -->
+<div class="anthology-nav relative py-8 flex items-center justify-center px-margin-mobile md:absolute md:bottom-12 md:left-0 md:right-0 md:z-20 md:py-0 md:px-margin-desktop md:pointer-events-none">
+<div class="anthology-dots flex items-center gap-3 md:pointer-events-auto" role="tablist" aria-label="Visual Anthology frames">
+<button class="anthology-dot active" type="button" data-dot="0" role="tab" aria-label="Frame 1 of 3"></button>
+<button class="anthology-dot" type="button" data-dot="1" role="tab" aria-label="Frame 2 of 3"></button>
+<button class="anthology-dot" type="button" data-dot="2" role="tab" aria-label="Frame 3 of 3"></button>
+</div>
 </div>
 </div>
 </div>
@@ -1206,23 +1231,72 @@
                 gsap.ticker.add((time) => lenis.raf(time * 1000));
                 gsap.ticker.lagSmoothing(0);
 
-                // Anthology horizontal scroll-pin (desktop only)
-                const isDesktop = window.matchMedia('(min-width: 768px)').matches;
-                const track = document.getElementById('anthology-track');
-                if (isDesktop && track) {
-                    const distance = () => track.scrollWidth - innerWidth + 64;
-                    gsap.to(track, {
-                        x: () => -distance(),
-                        ease: 'none',
-                        scrollTrigger: {
-                            trigger: '.anthology-pin',
-                            start: 'top top',
-                            end: 'bottom bottom',
-                            scrub: 0.6,
-                            invalidateOnRefresh: true
+                // Visual Anthology: pinned horizontal scroll (desktop CSS sticky + JS transform) + dots (both)
+                (() => {
+                    const section = document.getElementById('anthology');
+                    const track = document.getElementById('anthology-scroll');
+                    if (!section || !track) return;
+                    const cards = Array.from(track.children);
+                    const dots = section.querySelectorAll('.anthology-dot');
+                    const setActive = (i) => dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+
+                    // Mobile: scroll-snap → dots sync
+                    const onTrackScroll = () => {
+                        if (window.innerWidth >= 768) return;
+                        const w = cards[0].offsetWidth || 1;
+                        const idx = Math.max(0, Math.min(cards.length - 1, Math.round(track.scrollLeft / w)));
+                        setActive(idx);
+                    };
+                    track.addEventListener('scroll', onTrackScroll, { passive: true });
+
+                    const scrollToCard = (i) => {
+                        const card = cards[i];
+                        if (!card) return;
+                        if (window.innerWidth < 768) {
+                            track.scrollTo({ left: card.offsetLeft - track.offsetLeft, behavior: 'smooth' });
+                        } else {
+                            const wrap = section.querySelector('.anthology-pin');
+                            if (!wrap) return;
+                            const pinTop = wrap.getBoundingClientRect().top + window.scrollY;
+                            const pinHeight = wrap.offsetHeight;
+                            const progress = cards.length > 1 ? i / (cards.length - 1) : 0;
+                            const target = pinTop + (pinHeight - window.innerHeight) * progress;
+                            if (typeof lenis !== 'undefined' && lenis?.scrollTo) lenis.scrollTo(target, { duration: 1.2 });
+                            else window.scrollTo({ top: target, behavior: 'smooth' });
                         }
+                    };
+                    dots.forEach((d, i) => d.addEventListener('click', () => scrollToCard(i)));
+
+                    // Desktop: CSS sticky + JS scroll-driven horizontal transform
+                    let ticking = false;
+                    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    const onPageScroll = () => {
+                        if (window.innerWidth < 768 || reduce) return;
+                        if (ticking) return;
+                        ticking = true;
+                        requestAnimationFrame(() => {
+                            ticking = false;
+                            const wrap = section.querySelector('.anthology-pin');
+                            if (!wrap) return;
+                            const rect = wrap.getBoundingClientRect();
+                            const total = wrap.offsetHeight - window.innerHeight;
+                            if (total <= 0) return;
+                            const scrolled = Math.max(0, Math.min(total, -rect.top));
+                            const progress = scrolled / total;
+                            const cardW = cards[0].offsetWidth;
+                            const distance = (cards.length - 1) * cardW;
+                            track.style.transform = `translate3d(${-progress * distance}px, 0, 0)`;
+                            const i = Math.min(cards.length - 1, Math.round(progress * (cards.length - 1)));
+                            setActive(i);
+                        });
+                    };
+                    window.addEventListener('scroll', onPageScroll, { passive: true });
+                    window.addEventListener('resize', () => {
+                        if (window.innerWidth < 768) track.style.transform = '';
+                        onPageScroll();
                     });
-                }
+                    onPageScroll();
+                })();
             });
         }
     })();
